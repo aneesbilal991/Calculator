@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wraith Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .calculator {
+            background: #2C3E50;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            width: 320px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        
+        .app-name {
+            color: #00FF00;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .developer {
+            color: #95A5A6;
+            font-size: 12px;
+        }
+        
+        .display {
+            background: #34495E;
+            border: none;
+            border-radius: 10px;
+            color: #ECF0F1;
+            font-size: 24px;
+            padding: 15px;
+            text-align: right;
+            width: 100%;
+            margin-bottom: 15px;
+            outline: none;
+        }
+        
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+        
+        button {
+            border: none;
+            border-radius: 10px;
+            padding: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        button:active {
+            transform: scale(0.95);
+        }
+        
+        .number {
+            background: #3498DB;
+            color: white;
+        }
+        
+        .operator {
+            background: #E74C3C;
+            color: white;
+        }
+        
+        .equals {
+            background: #2ECC71;
+            color: white;
+        }
+        
+        .clear {
+            background: #E67E22;
+            color: white;
+        }
+        
+        .scientific {
+            background: #9B59B6;
+            color: white;
+        }
+        
+        .memory {
+            background: #1ABC9C;
+            color: white;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 15px;
+            color: #95A5A6;
+            font-size: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <div class="header">
+            <div class="app-name">WRAITH CALCULATOR</div>
+            <div class="developer">by Wraith Developer</div>
+        </div>
+        
+        <input type="text" class="display" id="display" value="0" readonly>
+        
+        <div class="buttons">
+            <!-- Row 1 -->
+            <button class="clear" onclick="clearAll()">C</button>
+            <button class="memory" onclick="memoryClear()">MC</button>
+            <button class="memory" onclick="memoryRecall()">MR</button>
+            <button class="operator" onclick="appendToDisplay('/')">/</button>
+            
+            <!-- Row 2 -->
+            <button class="number" onclick="appendToDisplay('7')">7</button>
+            <button class="number" onclick="appendToDisplay('8')">8</button>
+            <button class="number" onclick="appendToDisplay('9')">9</button>
+            <button class="operator" onclick="appendToDisplay('*')">×</button>
+            
+            <!-- Row 3 -->
+            <button class="number" onclick="appendToDisplay('4')">4</button>
+            <button class="number" onclick="appendToDisplay('5')">5</button>
+            <button class="number" onclick="appendToDisplay('6')">6</button>
+            <button class="operator" onclick="appendToDisplay('-')">-</button>
+            
+            <!-- Row 4 -->
+            <button class="number" onclick="appendToDisplay('1')">1</button>
+            <button class="number" onclick="appendToDisplay('2')">2</button>
+            <button class="number" onclick="appendToDisplay('3')">3</button>
+            <button class="operator" onclick="appendToDisplay('+')">+</button>
+            
+            <!-- Row 5 -->
+            <button class="number" onclick="appendToDisplay('0')">0</button>
+            <button class="number" onclick="appendToDisplay('.')">.</button>
+            <button class="scientific" onclick="calculateSquare()">x²</button>
+            <button class="equals" onclick="calculate()">=</button>
+        </div>
+        
+        <div class="footer">
+            © 2024 Wraith Developer. All rights reserved.
+        </div>
+    </div>
+
+    <script>
+        let memory = 0;
+        let currentDisplay = '0';
+        
+        function updateDisplay() {
+            document.getElementById('display').value = currentDisplay;
+        }
+        
+        function appendToDisplay(value) {
+            if (currentDisplay === '0' || currentDisplay === 'Error') {
+                currentDisplay = value;
+            } else {
+                currentDisplay += value;
+            }
+            updateDisplay();
+        }
+        
+        function clearAll() {
+            currentDisplay = '0';
+            updateDisplay();
+        }
+        
+        function calculate() {
+            try {
+                // Replace × with * for evaluation
+                let expression = currentDisplay.replace(/×/g, '*');
+                let result = eval(expression);
+                
+                if (isNaN(result) || !isFinite(result)) {
+                    currentDisplay = 'Error';
+                } else {
+                    currentDisplay = result.toString();
+                }
+            } catch (error) {
+                currentDisplay = 'Error';
+            }
+            updateDisplay();
+        }
+        
+        function calculateSquare() {
+            try {
+                let num = parseFloat(currentDisplay);
+                if (!isNaN(num)) {
+                    currentDisplay = (num * num).toString();
+                }
+            } catch (error) {
+                currentDisplay = 'Error';
+            }
+            updateDisplay();
+        }
+        
+        function memoryClear() {
+            memory = 0;
+        }
+        
+        function memoryRecall() {
+            currentDisplay = memory.toString();
+            updateDisplay();
+        }
+        
+        function memoryAdd() {
+            try {
+                memory += parseFloat(currentDisplay);
+            } catch (error) {
+                // Ignore errors
+            }
+        }
+        
+        // Keyboard support
+        document.addEventListener('keydown', function(event) {
+            const key = event.key;
+            
+            if ('0123456789'.includes(key)) {
+                appendToDisplay(key);
+            } else if ('+-*/'.includes(key)) {
+                appendToDisplay(key === '*' ? '×' : key);
+            } else if (key === 'Enter' || key === '=') {
+                calculate();
+            } else if (key === 'Escape' || key === 'c' || key === 'C') {
+                clearAll();
+            } else if (key === '.') {
+                appendToDisplay('.');
+            }
+        });
+        
+        // Initialize display
+        updateDisplay();
+    </script>
+</body>
+</html>
